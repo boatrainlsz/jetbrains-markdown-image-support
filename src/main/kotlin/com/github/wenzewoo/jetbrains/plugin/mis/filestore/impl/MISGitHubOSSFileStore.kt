@@ -24,7 +24,6 @@
 
 package com.github.wenzewoo.jetbrains.plugin.mis.filestore.impl
 
-import com.aliyun.oss.OSSClientBuilder
 import com.github.wenzewoo.jetbrains.plugin.mis.config.MISConfigService
 import org.kohsuke.github.GitHubBuilder
 import java.io.File
@@ -48,6 +47,7 @@ class MISGitHubOSSFileStore : MISAbstractOSSFileStore() {
         return try {
             val repository = githubClient.getRepository(state.githubRepoName)
             //todo 删除文件
+
             true
         } catch (e: Throwable) {
             false
@@ -57,7 +57,11 @@ class MISGitHubOSSFileStore : MISAbstractOSSFileStore() {
     override fun upload(byteArray: ByteArray, fileKey: String, check: Boolean): Boolean {
         return try {
             val repository = githubClient.getRepository(state.githubRepoName)
-            //todo 上传文件
+            repository.createContent()
+                .content(byteArray).message(fileKey)
+                .path(state.githubStoragePath + "/" + fileKey)
+                .branch(state.githubRepoBranch)
+                .commit()
             if (check) {
                 val url = URL(this.previewUrl(fileKey, false))
                 val conn = url.openConnection() as HttpURLConnection
