@@ -1,0 +1,148 @@
+<!--
+  ~ MIT License
+  ~
+  ~ Copyright (c) 2020 吴汶泽 <wenzewoo@gmail.com>
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+
+<idea-plugin>
+    <id>com.github.wenzewoo.jetbrains.plugin.jetbrains-markdown-image-support</id>
+    <name>Markdown Image Support</name>
+    <vendor email="wenzewoo@gmail.com" url="https://github.com/wenzewoo">Wenze.Woo</vendor>
+
+    <description><![CDATA[
+        <h1>Markdown Image Support</h1>
+        <p>
+            <a href="https://github.com/wenzewoo/jetbrains-markdown-image-support">Source Code</a> |
+            <a href="https://github.com/wenzewoo/jetbrains-markdown-image-support/issues">Report Issues</a>
+        </p>
+        <hr/>
+        <p>
+            Markdown editor one click upload image support is applicable to common products of JetBrains series.
+            <p>Features：</p>
+            <ul>
+                <li>Multiple storage support, such as local / qiniu / aliyun OSS / tencent OSS, etc.</li>
+                <li>Customize the file name naming policy and provide a variety of preset schemes.</li>
+                <li>Provide picture compression function, compress pictures according to the set compression rate.</li>
+                <li>Directly from the paste image to the editor, automatically upload the image and convert it to the markdown tag.</li>
+                <li>Directly copy one or more picture files to the editor, automatically upload the pictures and convert them to markdown tags.</li>
+                <li>Through the ALT + enter shortcut key, the image can be deleted intelligently. When the markdown tag is deleted, the source file in the corresponding storage can be removed.</li>
+            </ul>
+        </p>
+        <hr/>
+        <p>
+            Markdown编辑器一键上传图片支持，适用于Jetbrains系列的常见产品。
+            <p>特性：</p>
+            <ul>
+                <li>多种存储支持，如本地/七牛/阿里云OSS/腾讯OSS等。</li>
+                <li>自定义文件名命名策略，并提供多种预设方案。</li>
+                <li>提供图片压缩功能，按照设置的压缩率压缩图片。</li>
+                <li>直接从粘贴图片到编辑器，自动上传图片并转换为Markdown标签。</li>
+                <li>直接复制一个或者多个图片文件到编辑器，自动上传图片并转换为Markdown标签。</li>
+                <li>通过Alt+Enter快捷键，智能删除图片，删除Markdown标记的同时，移除对应存储中的源文件。</li>
+            </ul>
+        </p>
+        <hr/>
+        <img src="https://raw.githubusercontent.com/wenzewoo/jetbrains-markdown-image-support/master/screenshots/example1.png" border="0" width="700" />
+        <img src="https://raw.githubusercontent.com/wenzewoo/jetbrains-markdown-image-support/master/screenshots/example2.png" border="0" width="700" />
+        <img src="https://raw.githubusercontent.com/wenzewoo/jetbrains-markdown-image-support/master/screenshots/example3.gif" border="0" width="700" />
+]]></description>
+
+    <change-notes><![CDATA[
+
+        <p>1.4-SNAPSHOT：2022/02/11</p>
+        <ul>
+            <li>Add MinIO support</li>
+        </ul>
+        <hr/>
+
+        <p>1.3-SNAPSHOT：2021/09/10</p>
+        <ul>
+            <li>Fix issues#1</li>
+            <li>Add aliyun OSS support</li>
+            <li>Minimum supported version 2019.3</li>
+            <li>Upload dialog style adjustment</li>
+        </ul>
+        <ul>
+            <li>Fix issues#1</li>
+            <li>增加阿里云OSS支持</li>
+            <li>最低支持版本2019.3</li>
+            <li>上传Dialog样式调整</li>
+        </ul>
+        <hr/>
+
+        <p>1.2-SNAPSHOT：2020/04/14</p>
+        <ul>
+            <li>Fix null pointer exception</li>
+        </ul>
+        <ul>
+            <li>修复空指针异常</li>
+        </ul>
+        <hr/>
+
+        <p>1.1-SNAPSHOT：2020/04/10</p>
+        <ul>
+            <li>Support new version IDEA v2020.1</li>
+        </ul>
+        <ul>
+            <li>支持新版IDEA v2020.1</li>
+        </ul>
+        <hr/>
+
+        <p>1.0-SNAPSHOT：2020/04/09</p>
+        <ul>
+            <li>First version release</li>
+        </ul>
+        <ul>
+            <li>第一个版本发布</li>
+        </ul>
+    ]]></change-notes>
+
+    <idea-version since-build="193"/>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!--设置：持久化服务-->
+        <applicationService
+                serviceImplementation="com.github.wenzewoo.jetbrains.plugin.mis.config.MISConfigService"/>
+
+        <!--设置：界面UI-->
+        <applicationConfigurable
+                groupId="other"
+                instance="com.github.wenzewoo.jetbrains.plugin.mis.config.MISConfigView"/>
+
+        <!--编辑器：粘贴图片事件-->
+        <editorActionHandler
+                action="EditorPaste"
+                implementationClass="com.github.wenzewoo.jetbrains.plugin.mis.action.MISMarkdownEditorPasteAction"
+                order="first"/>
+
+        <!--ALT+ENTER: 万能修复键-->
+        <intentionAction>
+            <!--删除当前行图片源文件-->
+            <className>com.github.wenzewoo.jetbrains.plugin.mis.action.MISDeleteImageIntentionAction</className>
+        </intentionAction>
+
+    </extensions>
+
+    <actions>
+    </actions>
+</idea-plugin>
