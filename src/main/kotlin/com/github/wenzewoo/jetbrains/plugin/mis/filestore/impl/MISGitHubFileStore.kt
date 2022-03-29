@@ -29,6 +29,7 @@ import org.kohsuke.github.GitHubBuilder
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.UnknownHostException
 
 class MISGitHubFileStore : MISAbstractOSSFileStore() {
     private val state = MISConfigService.getInstance().state!!
@@ -51,9 +52,17 @@ class MISGitHubFileStore : MISAbstractOSSFileStore() {
                 return conn.responseCode == 200 || conn.responseCode == 304
             }
             true
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            false
+        }
+        catch (e: Throwable) {
+            if(e is UnknownHostException) {
+                //总是出现java.net.UnknownHostException: raw.githubusercontent.com，但是上传成功，先忽略
+                //todo
+                true
+            }else {
+                e.printStackTrace()
+                false
+            }
+
         }
     }
 
