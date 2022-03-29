@@ -56,6 +56,7 @@ class MISGitHubFileStore : MISAbstractOSSFileStore() {
         catch (e: Throwable) {
             if(e is UnknownHostException) {
                 //总是出现java.net.UnknownHostException: raw.githubusercontent.com，但是上传成功，先忽略
+                //怀疑是翻墙的问题
                 //todo
                 true
             }else {
