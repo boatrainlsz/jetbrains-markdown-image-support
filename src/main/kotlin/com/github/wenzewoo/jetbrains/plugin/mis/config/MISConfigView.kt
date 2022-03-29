@@ -90,6 +90,16 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
             this.textMinioEndpoint.text = it.minioEndpoint
             this.comboMinioNewFilenameTemplate.selectedItem = it.minioNewFilenameTemplate
             this.textMinioNewFilenameCustomText.text = it.minioNewFilenameCustomText
+
+            // github
+            this.checkGitHubEnable.isSelected = it.gitHubEnabled
+            this.githubToken.text = it.githubToken
+            this.githubRepoName.text = it.githubRepoName
+            this.githubRepoBranch.text = it.githubRepoBranch
+            this.githubStoragePath.text = it.githubStoragePath
+            this.githubCustomDomain.text = it.githubCustomDomain
+            this.comboGitHubNewFilenameTemplate.selectedItem = it.githubNewFilenameTemplate
+            this.textGitHubNewFilenameCustomText.text = it.githubNewFilenameCustomText
         }
     }
 
@@ -98,6 +108,7 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
         this.initializationComponentsListenerWithQiniu()
         this.initializationComponentsListenerWithAliyun()
         this.initializationComponentsListenerWithMinIO()
+        this.initializationComponentsListenerWithGitHub()
     }
 
     private fun initializationComponentsListenerWithQiniu() {
@@ -200,7 +211,6 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
     }
 
 
-
     private fun initializationComponentsListenerWithMinIO() {
         // newFileName 联动效果
         this.textMinioNewFilenameCustomText.isVisible =
@@ -236,6 +246,50 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
 
             // test connection
             val message = if (MISFileStoreFactory.of(Consts.FileStoreMinIO).test()) {
+                "Successful."
+            } else {
+                "Upload fail, Please check the configuration."
+            }
+            Messages.showInfoMessage(message, "Test Result")
+        }
+    }
+
+    private fun initializationComponentsListenerWithGitHub() {
+        // newFileName 联动效果
+        this.textGitHubNewFilenameCustomText.isVisible =
+            this.comboMinioNewFilenameTemplate.selectedItem?.toString() == Consts.CustomFlag
+        this.comboGitHubNewFilenameTemplate.addItemListener {
+            this.textGitHubNewFilenameCustomText.isVisible = it.item.toString() == Consts.CustomFlag
+            if (this.textGitHubNewFilenameCustomText.isVisible) {
+                this.textGitHubNewFilenameCustomText.requestFocus()
+            }
+        }
+
+        // checkGitHubEnable & components 联动效果
+        val components: Array<JComponent> = arrayOf(
+            this.githubRepoName,
+            this.githubRepoBranch,
+            this.githubToken,
+            this.githubStoragePath,
+            this.githubCustomDomain,
+            this.comboGitHubNewFilenameTemplate,
+            this.textGitHubNewFilenameCustomText,
+            this.buttonTestGitHub
+        )
+        this.batchSetComponentEnabled(this.checkGitHubEnable.isSelected, *components)
+        this.checkGitHubEnable.addActionListener {
+            MISConfigService.getInstance().state?.let { state ->
+                state.gitHubEnabled = this.checkGitHubEnable.isSelected
+            }
+            this.batchSetComponentEnabled(this.checkGitHubEnable.isSelected, *components)
+        }
+
+        this.buttonTestGitHub.addActionListener {
+            // save config
+            this.apply()
+
+            // test connection
+            val message = if (MISFileStoreFactory.of(Consts.FileStoreGitHub).test()) {
                 "Successful."
             } else {
                 "Upload fail, Please check the configuration."
@@ -311,7 +365,9 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
 
     override fun isModified(): Boolean {
         val state = MISConfigService.getInstance().state!!
-        return this.isModifiedWithLocal(state) || this.isModifiedWithQiniu(state) || this.isModifiedWithAliyun(state) || this.isModifiedWithMinIO(state)
+        return this.isModifiedWithLocal(state) || this.isModifiedWithQiniu(state) || this.isModifiedWithAliyun(state) || this.isModifiedWithMinIO(
+            state
+        )
     }
 
     @Suppress("DuplicatedCode")
@@ -365,7 +421,6 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
             )
         )
     }
-
 
 
     @Suppress("DuplicatedCode")
@@ -459,7 +514,7 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
             it.aliyunNewFilenameCustomText = this.textAliyunNewFilenameCustomText.text.trim()
             it.aliyunStyleSuffix = this.textAliyunStyleSuffix.text.trim()
 
-
+            //save minio
             it.minioEnabled = this.checkMinioEnable.isSelected
             it.minioBucket = this.textMinioBucket.text.trim()
             it.minioAccessKey = this.textMinioAccessKey.text.trim()
@@ -467,6 +522,16 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
             it.minioEndpoint = this.textMinioEndpoint.text.trim()
             it.minioNewFilenameTemplate = this.comboMinioNewFilenameTemplate.selectedItem?.toString()!!.trim()
             it.minioNewFilenameCustomText = this.textMinioNewFilenameCustomText.text.trim()
+
+            //save github
+            it.gitHubEnabled = this.checkGitHubEnable.isSelected
+            it.githubRepoName = this.githubRepoName.text.trim()
+            it.githubRepoBranch = this.githubRepoBranch.text.trim()
+            it.githubToken = this.githubToken.text.trim()
+            it.githubStoragePath = this.githubStoragePath.text.trim()
+            it.githubCustomDomain = this.githubCustomDomain.text.trim()
+            it.githubNewFilenameTemplate = this.comboGitHubNewFilenameTemplate.selectedItem?.toString()!!.trim()
+            it.githubNewFilenameCustomText = this.textGitHubNewFilenameCustomText.text.trim()
 
             it.validMessage()?.let { message ->
                 Messages.showErrorDialog(message, "Save Error");

@@ -64,8 +64,10 @@ class MISConfig {
     var githubRepoName: String = ""
     var githubRepoBranch: String = ""
     var githubToken: String = ""
-    var githubStoragePath: String = "oss-cn-chengdu.aliyuncs.com"
-    var githubCustomDomain: String? = "?x-oss-process=image/auto-orient,1/interlace,1/quality,q_50/format,jpg"
+    var githubStoragePath: String = ""
+    var githubCustomDomain: String? = ""
+    var githubNewFilenameTemplate: String = ""
+    var githubNewFilenameCustomText: String = ""
 
     // minio
     var minioEnabled: Boolean = false
