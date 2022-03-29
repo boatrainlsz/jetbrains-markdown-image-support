@@ -44,7 +44,7 @@ object MISFileStoreFactory {
                 MISMinIOFileStore()
             }
             Consts.FileStoreGitHub -> {
-                MISGitHubOSSFileStore()
+                MISGitHubFileStore()
             }
             else -> MISLocalFileStore()
         }

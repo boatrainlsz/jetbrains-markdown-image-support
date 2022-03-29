@@ -30,38 +30,21 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-class MISGitHubOSSFileStore : MISAbstractOSSFileStore() {
+class MISGitHubFileStore : MISAbstractOSSFileStore() {
     private val state = MISConfigService.getInstance().state!!
     private val githubClient = GitHubBuilder().withOAuthToken(state.githubToken).build()
 
 
     @Suppress("HttpUrlsUsage")
     override fun delete(localFile: File?, markdownUrl: String): Boolean {
-        var fileKey = markdownUrl.replace("https://${state.aliyunBucket}.${state.aliyunEndpoint}", "")
-            .replace("http://${state.aliyunBucket}.${state.aliyunEndpoint}", "")
-            .replace(state.aliyunStyleSuffix ?: "", "")
-        if (fileKey.startsWith("/")) {
-            fileKey = fileKey.substring(1)
-        }
-
-        return try {
-            val repository = githubClient.getRepository(state.githubRepoName)
-            //todo 删除文件
-
-            true
-        } catch (e: Throwable) {
-            false
-        }
+        return false
     }
 
     override fun upload(byteArray: ByteArray, fileKey: String, check: Boolean): Boolean {
         return try {
             val repository = githubClient.getRepository(state.githubRepoName)
-            repository.createContent()
-                .content(byteArray).message(fileKey)
-                .path(state.githubStoragePath + "/" + fileKey)
-                .branch(state.githubRepoBranch)
-                .commit()
+            repository.createContent().content(byteArray).message(fileKey).path(state.githubStoragePath + "/" + fileKey)
+                .branch(state.githubRepoBranch).commit()
             if (check) {
                 val url = URL(this.previewUrl(fileKey, false))
                 val conn = url.openConnection() as HttpURLConnection
@@ -75,7 +58,9 @@ class MISGitHubOSSFileStore : MISAbstractOSSFileStore() {
     }
 
     override fun previewUrl(fileKey: String, styleSuffix: Boolean): String {
-        return "https://${state.aliyunBucket}.${state.aliyunEndpoint}/${fileKey}${if (styleSuffix) state.aliyunStyleSuffix else ""}"
+        return "https://raw.githubusercontent.com/" +
+                "${state.githubRepoName}/${state.githubRepoBranch}/" +
+                "${state.githubStoragePath}/${fileKey}"
     }
 
 }
