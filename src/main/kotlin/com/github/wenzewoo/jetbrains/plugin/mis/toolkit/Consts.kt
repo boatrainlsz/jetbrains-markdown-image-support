@@ -31,4 +31,6 @@ object Consts {
     const val FileStoreAliyunOSS = "AliyunOSS"
     const val FileStoreGitHub= "GitHub"
     const val FileStoreMinIO = "MinIO"
+    const val UploadError = "Upload fail, Please check the configuration."
+    const val Success = "Successful."
 }

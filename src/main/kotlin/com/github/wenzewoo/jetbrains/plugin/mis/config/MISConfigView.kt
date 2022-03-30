@@ -158,9 +158,9 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
 
             // test connection
             val message = if (MISFileStoreFactory.of(Consts.FileStoreQiniu).test()) {
-                "Successful."
+                Consts.Success
             } else {
-                "Upload fail, Please check the configuration."
+                Consts.UploadError
             }
             Messages.showInfoMessage(message, "Test Result")
         }
@@ -202,9 +202,9 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
 
             // test connection
             val message = if (MISFileStoreFactory.of(Consts.FileStoreAliyunOSS).test()) {
-                "Successful."
+                Consts.Success
             } else {
-                "Upload fail, Please check the configuration."
+                Consts.UploadError
             }
             Messages.showInfoMessage(message, "Test Result")
         }
@@ -246,9 +246,9 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
 
             // test connection
             val message = if (MISFileStoreFactory.of(Consts.FileStoreMinIO).test()) {
-                "Successful."
+                Consts.Success
             } else {
-                "Upload fail, Please check the configuration."
+                Consts.UploadError
             }
             Messages.showInfoMessage(message, "Test Result")
         }
@@ -290,9 +290,9 @@ class MISConfigView : MISConfigurationInterfaceForm(), SearchableConfigurable, C
 
             // test connection
             val message = if (MISFileStoreFactory.of(Consts.FileStoreGitHub).test()) {
-                "Successful."
+                Consts.Success
             } else {
-                "Upload fail, Please check the configuration."
+                Consts.UploadError
             }
             Messages.showInfoMessage(message, "Test Result")
         }
