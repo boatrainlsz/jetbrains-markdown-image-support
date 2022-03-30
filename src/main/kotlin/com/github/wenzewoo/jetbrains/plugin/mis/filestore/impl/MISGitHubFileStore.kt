@@ -38,7 +38,7 @@ class MISGitHubFileStore : MISAbstractOSSFileStore() {
 
     @Suppress("HttpUrlsUsage")
     override fun delete(localFile: File?, markdownUrl: String): Boolean {
-        return false
+        return true
     }
 
     override fun upload(byteArray: ByteArray, fileKey: String, check: Boolean): Boolean {
