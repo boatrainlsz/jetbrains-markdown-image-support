@@ -68,9 +68,13 @@ class MISGitHubFileStore : MISAbstractOSSFileStore() {
     }
 
     override fun previewUrl(fileKey: String, styleSuffix: Boolean): String {
-        return "https://raw.githubusercontent.com/" +
-                "${state.githubRepoName}/${state.githubRepoBranch}/" +
-                "${state.githubStoragePath}/${fileKey}"
+        return if (MISConfigService.getInstance().state!!.githubCustomDomain!!.isEmpty()) {
+            "https://raw.githubusercontent.com/${state.githubRepoName}/" +
+                    "${state.githubRepoBranch}/${state.githubStoragePath}/${fileKey}"
+        } else {
+            "https://${state.githubCustomDomain}/${state.githubRepoName}/" +
+                    "${state.githubRepoBranch}/${state.githubStoragePath}/${fileKey}"
+        }
     }
 
 }
